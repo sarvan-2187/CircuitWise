@@ -70,17 +70,18 @@ export async function POST(req: NextRequest) {
 
     let text = result.response.text().trim();
 
-    // Remove markdown if it sneaks in
+    // Remove markdown-style formatting if present
     if (text.startsWith("```")) {
       text = text.replace(/```(?:json)?\n?/, "").replace(/```$/, "").trim();
     }
 
     const json = JSON.parse(text);
     return NextResponse.json(json);
-  } catch (error: any) {
-    console.error("Circuit Analyzer error:", error);
+  } catch (error) {
+    const err = error as Error; // ✅ No 'any' type here
+    console.error("Circuit Analyzer error:", err);
     return NextResponse.json(
-      { error: error.message || "Something went wrong" },
+      { error: err.message || "Something went wrong" },
       { status: 500 }
     );
   }
