@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import SARVAN from '@/assets/sarvan.png'; // Keep this for image optimization if needed
+import Image from 'next/image';
 
 const Footer = () => {
     return (
@@ -41,7 +41,7 @@ const Footer = () => {
                             className="flex flex-col items-center text-center gap-2"
                         >
                             <div className="w-20 h-20 rounded-full bg-white/10 border border-white/20 overflow-hidden">
-                                <img
+                                <Image
                                     src={member.image}
                                     alt={member.name}
                                     className="w-full h-full object-cover"
