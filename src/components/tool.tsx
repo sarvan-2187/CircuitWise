@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import React, { useState } from 'react';
 
 const ToolSection = () => {
@@ -106,7 +107,7 @@ const ToolSection = () => {
                         </div>
                     ) : (
                         <div className="relative w-full">
-                            <img
+                            <Image
                                 src={previewUrl}
                                 alt="Uploaded Preview"
                                 className="w-full max-h-96 object-contain rounded-lg shadow-md"
