@@ -195,20 +195,6 @@ const ToolSection = () => {
               </div>
             </div>
 
-            {/* 🔗 Pin Connections */}
-            <div>
-              <h3 className="text-lg font-semibold text-cyan-400 mb-4">Pin Connections</h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {analysisResult.pin_connections.map((conn, idx) => (
-                  <div key={idx} className="bg-zinc-800 rounded-xl p-4 shadow shadow-cyan-800/20">
-                    <p className="text-sm text-gray-400">From</p>
-                    <p className="text-md text-green-300">{conn.from}</p>
-                    <p className="text-sm text-gray-400 mt-2">To</p>
-                    <p className="text-md text-green-300">{conn.to}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
 
             {/* 🧵 Wire Count */}
             <div>
