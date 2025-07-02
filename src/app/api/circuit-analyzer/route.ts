@@ -12,6 +12,8 @@ Your task is to:
 4. For wires, **each direct connection between two pins or components counts as one wire**, even if the signal is shared.
 5. Include wires for VCC and GND for each IC (2 per IC).
 6. Do not include input & output in components part 
+7. do not leave any of the part in the JSON Reepose empty.
+8. always maintain 100% Accuracy.
 Respond strictly in the following JSON format:
 
 {
