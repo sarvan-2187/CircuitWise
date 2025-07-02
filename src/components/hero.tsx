@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 
 const HeroSection = () => {
     return (
-        <section className="min-h-screen flex items-center justify-center" id="home">
+        <section className="min-h-screen flex mt-20 items-center justify-center" id="home">
             <div className="flex flex-col items-center justify-center gap-6 px-4">
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
@@ -24,7 +24,7 @@ const HeroSection = () => {
                 </motion.div>
 
                 <div className="flex flex-col items-center justify-center text-center space-y-4">
-                    <h1 className="text-xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent tracking-wide">
+                    <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-cyan-400 to-green-400 bg-clip-text text-transparent tracking-wide">
                         Welcome to CircuitWise
                     </h1>
                     <p className="w-full md:max-w-2xl text-md text-gray-300 backdrop-blur-sm px-2 py-2 rounded-xl bg-white/5 border border-white/10 shadow-md">
