@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 
 const HeroSection = () => {
     return (
-        <section className="min-h-screen flex mt-20 items-center justify-center" id="home">
+        <section className="min-h-screen flex mt-2 items-center justify-center" id="home">
             <div className="flex flex-col items-center justify-center gap-6 px-4">
                 <motion.div
                     initial={{ scale: 0.9, opacity: 0 }}
