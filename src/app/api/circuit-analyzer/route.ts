@@ -28,7 +28,11 @@ Your task is to:
 7. do not leave any of the part in the JSON Reepose empty.
 
 
-8. always maintain 100% Accuracy.
+8. always maintain 100% Accuracy and give consistent answers for the same query
+
+9. always respond to every part of the response do not send any null response.
+
+
 Respond strictly in the following JSON format:
 
 
@@ -71,7 +75,7 @@ Do not assume hidden internal wiring unless the IC handles it entirely.
 Do not reduce count due to logical equivalence.
 
 
-⚠️ Important: Ensure your wire count reflects all pin-to-pin connections from the pin table. and they are 100% accurate.
+⚠️ Important: Ensure your wire count reflects all pin-to-pin connections from the pin table. and they must be 100% accurate and consistent. Also make sure that you do not send null responses.
 
 Do not include any cost estimation. Respond strictly in JSON.
 `;
