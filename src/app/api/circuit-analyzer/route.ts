@@ -122,5 +122,5 @@ return NextResponse.json(
 { status: 500 }
 );
 }
-
+}
 
