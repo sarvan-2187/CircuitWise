@@ -11,7 +11,7 @@ Your task is to:
 3. Count the total number of wires required, based on **pin-to-pin unique physical connections**.
 4. For wires, **each direct connection between two pins or components counts as one wire**, even if the signal is shared.
 5. Include wires for VCC and GND for each IC (2 per IC).
-
+6. Do not include input & output in components part 
 Respond strictly in the following JSON format:
 
 {
