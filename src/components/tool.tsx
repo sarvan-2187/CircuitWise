@@ -1,6 +1,5 @@
 'use client';
 
-import Image from 'next/image';
 import React, { useState } from 'react';
 
 type ComponentSummaryItem = {
@@ -42,27 +41,30 @@ const ToolSection = () => {
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
+    const file = e.dataTransfer.files?.[0];
     if (file && file.type.startsWith('image/')) {
       setImage(file);
       setPreviewUrl(URL.createObjectURL(file));
+      setError(null);
+      setAnalysisResult(null);
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-  };
+  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && file.type.startsWith('image/')) {
       setImage(file);
       setPreviewUrl(URL.createObjectURL(file));
+      setError(null);
+      setAnalysisResult(null);
     }
   };
 
   const triggerFileSelect = () => {
-    document.getElementById('fileInput')?.click();
+    const input = document.getElementById('fileInput') as HTMLInputElement;
+    input?.click();
   };
 
   const handleRemoveImage = () => {
@@ -75,11 +77,11 @@ const ToolSection = () => {
   const handleAnalyzeImage = async () => {
     if (!image) return;
 
-    try {
-      setLoading(true);
-      setError(null);
-      setAnalysisResult(null);
+    setLoading(true);
+    setError(null);
+    setAnalysisResult(null);
 
+    try {
       const formData = new FormData();
       formData.append('image', image);
 
@@ -88,12 +90,15 @@ const ToolSection = () => {
         body: formData,
       });
 
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Analysis failed');
-      setAnalysisResult(data);
+      const data: AnalysisResult | { error: string } = await response.json();
+
+      if (!response.ok || 'error' in data) {
+        throw new Error('error' in data ? data.error : 'Analysis failed');
+      }
+
+      setAnalysisResult(data as AnalysisResult);
     } catch (err) {
-      const e = err as Error;
-      setError(e.message || 'Unexpected error');
+      setError((err as Error).message || 'Unexpected error occurred.');
     } finally {
       setLoading(false);
     }
@@ -114,7 +119,7 @@ const ToolSection = () => {
 
         {/* Upload Box */}
         <div
-          className="relative w-full border-2 border-dashed border-gray-500 rounded-xl px-24 py-10 md:p-10 flex flex-col items-center justify-center gap-4 bg-white/5 backdrop-blur-sm cursor-pointer transition-all hover:border-white shadow-lg hover:shadow-cyan-400/20"
+          className="relative w-full border-2 border-dashed border-gray-500 rounded-xl px-6 py-10 md:p-10 flex flex-col items-center justify-center gap-4 bg-white/5 backdrop-blur-sm cursor-pointer transition-all hover:border-white shadow-lg hover:shadow-cyan-400/20"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onClick={triggerFileSelect}
@@ -128,19 +133,17 @@ const ToolSection = () => {
           />
           {!previewUrl ? (
             <div className="text-center">
-              <p className="text-lg md:text-xl md:max-w-md text-gray-300 font-medium">
+              <p className="text-lg md:text-xl text-gray-300 font-medium">
                 Drag & Drop your image here
               </p>
               <p className="text-sm text-gray-500">or click to select (PNG, JPG, WebP)</p>
             </div>
           ) : (
             <div className="relative w-full">
-              <Image
+              <img
                 src={previewUrl}
                 alt="Uploaded Preview"
                 className="w-full max-h-96 object-contain rounded-lg shadow-md"
-                width={500}
-                height={300}
               />
               <button
                 onClick={(e) => {
@@ -157,14 +160,18 @@ const ToolSection = () => {
         </div>
 
         {/* Analyze Button */}
-        {image && (
+        {image && !analysisResult && (
           <button
             onClick={handleAnalyzeImage}
-            className="bg-gray-100 hover:bg-gray-400 cursor-pointer text-black px-4 transition-all duration-500 py-2 rounded-md"
+            className="bg-cyan-500 hover:bg-cyan-600 text-white px-6 py-2 rounded-md font-semibold transition-all"
+            disabled={loading}
           >
             {loading ? 'Analyzing...' : 'Analyze Circuit'}
           </button>
         )}
+
+        {/* Error Message */}
+        {error && <p className="text-red-500 text-sm">{error}</p>}
 
         {/* Output Display */}
         {analysisResult && (
@@ -182,7 +189,7 @@ const ToolSection = () => {
               </div>
             </div>
 
-            {/* 📦 ICs */}
+            {/* 📦 IC Assignments */}
             <div>
               <h3 className="text-lg font-semibold text-cyan-400 mb-4">IC Assignments</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
@@ -195,6 +202,27 @@ const ToolSection = () => {
               </div>
             </div>
 
+            {/* 🔗 Pin Connections */}
+            {analysisResult.pin_connections?.length > 0 && (
+              <div>
+                <h3 className="text-lg font-semibold text-cyan-400 mb-4">Pin Connections</h3>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  {analysisResult.pin_connections.map((conn, idx) => (
+                    <div
+                      key={idx}
+                      className="bg-zinc-800 rounded-xl p-3 shadow shadow-cyan-800/10 flex items-center justify-between"
+                    >
+                      <span className="text-sm text-white font-medium">
+                        From: <span className="text-green-400">{conn.from}</span>
+                      </span>
+                      <span className="text-sm text-white font-medium">
+                        To: <span className="text-green-400">{conn.to}</span>
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
 
             {/* 🧵 Wire Count */}
             <div>
@@ -226,9 +254,6 @@ const ToolSection = () => {
             </div>
           </div>
         )}
-
-        {/* Error */}
-        {error && <p className="text-red-500 text-sm">{error}</p>}
       </div>
     </section>
   );
