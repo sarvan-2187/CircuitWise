@@ -36,10 +36,16 @@ type AnalysisResult = {
   assumptions: string[];
 };
 
-// Declare global ImageCapture to avoid TS errors
+// Safer imageCapture type to avoid build errors on server
+type SafeImageCapture = {
+  new (track: MediaStreamTrack): {
+    takePhoto: () => Promise<Blob>;
+  };
+};
+
 declare global {
   interface Window {
-    ImageCapture: typeof ImageCapture;
+    imageCapture: SafeImageCapture;
   }
 }
 
@@ -94,8 +100,8 @@ const ToolSection = () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
       const track = mediaStream.getVideoTracks()[0];
-      const imageCapture = new (window as typeof window & { ImageCapture: typeof ImageCapture }).ImageCapture(track);
-      const blob = await imageCapture.takePhoto();
+      const capture = new window.imageCapture(track);
+      const blob = await capture.takePhoto();
       setImage(new File([blob], 'captured-image.jpg', { type: 'image/jpeg' }));
       setPreviewUrl(URL.createObjectURL(blob));
       track.stop();
