@@ -39,7 +39,7 @@ type AnalysisResult = {
 // Declare global ImageCapture to avoid TS errors
 declare global {
   interface Window {
-    ImageCapture: any;
+    ImageCapture: typeof ImageCapture;
   }
 }
 
@@ -49,6 +49,17 @@ const ToolSection = () => {
   const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+      setImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => e.preventDefault();
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -94,12 +105,12 @@ const ToolSection = () => {
     try {
       const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
       const track = mediaStream.getVideoTracks()[0];
-      const imageCapture = new window.ImageCapture(track);
+      const imageCapture = new (window as typeof window & { ImageCapture: typeof ImageCapture }).ImageCapture(track);
       const blob = await imageCapture.takePhoto();
       setImage(new File([blob], 'captured-image.jpg', { type: 'image/jpeg' }));
       setPreviewUrl(URL.createObjectURL(blob));
       track.stop();
-    } catch (err) {
+    } catch {
       setError('Camera capture failed');
     }
   };
