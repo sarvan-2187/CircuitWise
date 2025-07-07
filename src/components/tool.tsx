@@ -12,14 +12,7 @@ type ComponentSummaryItem = {
 };
 
 type ICAssignment = {
-  [label: string]: {
-    type: string;
-  };
-};
-
-type PinConnection = {
-  from: string;
-  to: string;
+  [label: string]: string;
 };
 
 type WireCount = {
@@ -31,7 +24,7 @@ type WireCount = {
 type AnalysisResult = {
   component_summary: ComponentSummaryItem[];
   ic_assignment: ICAssignment;
-  pin_connections: PinConnection[];
+  pin_connections: string[];
   wire_count: WireCount;
   assumptions: string[];
 };
@@ -56,6 +49,14 @@ const ToolSection = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const triggerFileSelect = () => document.getElementById('fileInput')?.click();
 
   const handleRemoveImage = () => {
@@ -63,14 +64,6 @@ const ToolSection = () => {
     setPreviewUrl(null);
     setAnalysisResult(null);
     setError(null);
-  };
-
-    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      setImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
   };
 
   const handleAnalyzeImage = async () => {
@@ -188,9 +181,56 @@ const ToolSection = () => {
         )}
 
         {analysisResult && (
-          <pre className="w-full overflow-auto bg-black text-white text-xs p-4 rounded-xl">
-            {JSON.stringify(analysisResult, null, 2)}
-          </pre>
+          <motion.div
+            className="w-full bg-zinc-900 rounded-xl p-6 mt-6 text-white space-y-6"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <div>
+              <h3 className="text-lg font-semibold text-cyan-400">🔧 Components</h3>
+              <ul className="list-disc list-inside text-sm text-gray-300">
+                {analysisResult.component_summary.map((comp, idx) => (
+                  <li key={idx}>{comp.type} — Count: {comp.count}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-cyan-400">🧠 IC Assignments</h3>
+              <ul className="list-disc list-inside text-sm text-gray-300">
+                {Object.entries(analysisResult.ic_assignment).map(([label, value], idx) => (
+                  <li key={idx}>{label} — {value}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-cyan-400">🔌 Pin Connections</h3>
+              <ul className="list-disc list-inside text-sm text-gray-300">
+                {analysisResult.pin_connections.map((conn, idx) => (
+                  <li key={idx}>{conn}</li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-cyan-400">📈 Wire Count</h3>
+              <ul className="list-disc list-inside text-sm text-gray-300">
+                <li>Total Circuit: {analysisResult.wire_count.total_circuit_connections}</li>
+                <li>Power Connections: {analysisResult.wire_count.total_power_connections}</li>
+                <li>Overall Total: {analysisResult.wire_count.overall_total}</li>
+              </ul>
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-cyan-400">📌 Assumptions</h3>
+              <ul className="list-disc list-inside text-sm text-gray-300">
+                {analysisResult.assumptions.map((item, idx) => (
+                  <li key={idx}>{item}</li>
+                ))}
+              </ul>
+            </div>
+            <p className="text-xs text-yellow-300">
+              ⚠️ This is an AI-generated analysis. Please verify the result for accuracy.
+            </p>
+          </motion.div>
         )}
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
