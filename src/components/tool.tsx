@@ -56,8 +56,9 @@ const ToolSection = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
       setImage(file);
       setPreviewUrl(URL.createObjectURL(file));
@@ -188,56 +189,9 @@ const ToolSection = () => {
         )}
 
         {analysisResult && (
-          <motion.div
-            className="w-full bg-zinc-900 rounded-xl p-6 mt-6 text-white space-y-6"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-          >
-            <div>
-              <h3 className="text-lg font-semibold text-cyan-400">🔧 Components</h3>
-              <ul className="list-disc list-inside text-sm text-gray-300">
-                {analysisResult.component_summary.map((comp, idx) => (
-                  <li key={idx}>{comp.type} — Count: {comp.count}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-cyan-400">🧠 IC Assignments</h3>
-              <ul className="list-disc list-inside text-sm text-gray-300">
-                {Object.entries(analysisResult.ic_assignment).map(([label, details], idx) => (
-                  <li key={idx}>{label} — {details.type}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-cyan-400">🔌 Pin Connections</h3>
-              <ul className="list-disc list-inside text-sm text-gray-300">
-                {analysisResult.pin_connections.map((conn, idx) => (
-                  <li key={idx}>{conn.from} → {conn.to}</li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-cyan-400">📈 Wire Count</h3>
-              <ul className="list-disc list-inside text-sm text-gray-300">
-                <li>Total Circuit: {analysisResult.wire_count.total_circuit_connections}</li>
-                <li>Power Connections: {analysisResult.wire_count.total_power_connections}</li>
-                <li>Overall Total: {analysisResult.wire_count.overall_total}</li>
-              </ul>
-            </div>
-            <div>
-              <h3 className="text-lg font-semibold text-cyan-400">📌 Assumptions</h3>
-              <ul className="list-disc list-inside text-sm text-gray-300">
-                {analysisResult.assumptions.map((item, idx) => (
-                  <li key={idx}>{item}</li>
-                ))}
-              </ul>
-            </div>
-            <p className="text-xs text-yellow-300">
-              ⚠️ This is an AI-generated analysis. Please verify the result for accuracy.
-            </p>
-          </motion.div>
+          <pre className="w-full overflow-auto bg-black text-white text-xs p-4 rounded-xl">
+            {JSON.stringify(analysisResult, null, 2)}
+          </pre>
         )}
 
         {error && <p className="text-red-500 text-sm">{error}</p>}
