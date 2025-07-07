@@ -188,7 +188,7 @@ const ToolSection = () => {
             transition={{ duration: 0.6 }}
           >
             <div>
-              <h3 className="text-lg font-semibold text-cyan-400">🔧 Components</h3>
+              <h3 className="text-lg font-semibold text-cyan-400"># Components</h3>
               <ul className="list-disc list-inside text-sm text-gray-300">
                 {analysisResult.component_summary.map((comp, idx) => (
                   <li key={idx}>{comp.type} — Count: {comp.count}</li>
@@ -196,7 +196,7 @@ const ToolSection = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-cyan-400">🧠 IC Assignments</h3>
+              <h3 className="text-lg font-semibold text-cyan-400"># IC Assignments</h3>
               <ul className="list-disc list-inside text-sm text-gray-300">
                 {Object.entries(analysisResult.ic_assignment).map(([label, value], idx) => (
                   <li key={idx}>{label} — {value}</li>
@@ -204,7 +204,7 @@ const ToolSection = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-cyan-400">🔌 Pin Connections</h3>
+              <h3 className="text-lg font-semibold text-cyan-400"># Pin Connections</h3>
               <ul className="list-disc list-inside text-sm text-gray-300">
                 {analysisResult.pin_connections.map((conn, idx) => (
                   <li key={idx}>{conn}</li>
@@ -212,7 +212,7 @@ const ToolSection = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-cyan-400">📈 Wire Count</h3>
+              <h3 className="text-lg font-semibold text-cyan-400"># Wire Count</h3>
               <ul className="list-disc list-inside text-sm text-gray-300">
                 <li>Total Circuit: {analysisResult.wire_count.total_circuit_connections}</li>
                 <li>Power Connections: {analysisResult.wire_count.total_power_connections}</li>
@@ -220,7 +220,7 @@ const ToolSection = () => {
               </ul>
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-cyan-400">📌 Assumptions</h3>
+              <h3 className="text-lg font-semibold text-cyan-400"># Assumptions</h3>
               <ul className="list-disc list-inside text-sm text-gray-300">
                 {analysisResult.assumptions.map((item, idx) => (
                   <li key={idx}>{item}</li>
