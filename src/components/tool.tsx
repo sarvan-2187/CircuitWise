@@ -56,15 +56,6 @@ const ToolSection = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      setImage(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
-
   const triggerFileSelect = () => document.getElementById('fileInput')?.click();
 
   const handleRemoveImage = () => {
