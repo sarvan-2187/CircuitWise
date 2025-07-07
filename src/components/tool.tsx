@@ -65,6 +65,14 @@ const ToolSection = () => {
     setError(null);
   };
 
+    const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      setImage(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
   const handleAnalyzeImage = async () => {
     if (!image) return;
     try {
