@@ -12,9 +12,7 @@ type WireCount = { total_circuit_connections: number; total_power_connections: n
 
 type AnalysisResult = { component_summary: ComponentSummaryItem[]; ic_assignment: ICAssignment; pin_connections: string[]; wire_count: WireCount; assumptions: string[]; };
 
-// Safer imageCapture type to avoid build errors on server type SafeImageCapture = { new (track: MediaStreamTrack): { takePhoto: () => Promise<Blob>; }; };
 
-declare global { interface Window { imageCapture: SafeImageCapture; } }
 
 const ToolSection = () => { const [image, setImage] = useState<File | null>(null); const [previewUrl, setPreviewUrl] = useState<string | null>(null); const [analysisResult, setAnalysisResult] = useState<AnalysisResult | null>(null); const [loading, setLoading] = useState(false); const [error, setError] = useState<string | null>(null);
 
@@ -26,7 +24,19 @@ const handleRemoveImage = () => { setImage(null); setPreviewUrl(null); setAnalys
 
 const handleAnalyzeImage = async () => { if (!image) return; try { setLoading(true); setError(null); setAnalysisResult(null); const formData = new FormData(); formData.append('image', image); const response = await fetch('/api/circuit-analyzer', { method: 'POST', body: formData, }); const data = await response.json(); if (!response.ok) throw new Error(data.error || 'Analysis failed'); setAnalysisResult(data); } catch (err) { const e = err as Error; setError(e.message || 'Unexpected error'); } finally { setLoading(false); } };
 
-const handleCaptureImage = async () => { try { const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true }); const track = mediaStream.getVideoTracks()[0]; const capture = new window.imageCapture(track); const blob = await capture.takePhoto(); setImage(new File([blob], 'captured-image.jpg', { type: 'image/jpeg' })); setPreviewUrl(URL.createObjectURL(blob)); track.stop(); } catch { setError('Camera capture failed'); } };
+const handleCaptureImage = async () => {
+  try {
+    const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
+    const track = mediaStream.getVideoTracks()[0];
+    const capture = new (window as any).ImageCapture(track); // ImageCapture is available in supported browsers
+    const blob = await capture.takePhoto();
+    setImage(new File([blob], 'captured-image.jpg', { type: 'image/jpeg' }));
+    setPreviewUrl(URL.createObjectURL(blob));
+    track.stop();
+  } catch (error) {
+    setError('Camera capture failed');
+  }
+};
 
 return ( <section id="tool" className="min-h-screen flex items-center justify-center px-4 py-10"> <div className="flex flex-col items-center w-full max-w-2xl gap-8">
 
