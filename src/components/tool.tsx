@@ -28,7 +28,7 @@ const handleCaptureImage = async () => {
   try {
     const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
     const track = mediaStream.getVideoTracks()[0];
-    const capture = new (window as any).ImageCapture(track); // ImageCapture is available in supported browsers
+const capture = new (window as unknown as { ImageCapture: new (track: MediaStreamTrack) => any }).ImageCapture(track);
     const blob = await capture.takePhoto();
     setImage(new File([blob], 'captured-image.jpg', { type: 'image/jpeg' }));
     setPreviewUrl(URL.createObjectURL(blob));
