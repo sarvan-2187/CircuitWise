@@ -93,19 +93,7 @@ const ToolSection = () => {
     }
   };
 
-  const handleCaptureImage = async () => {
-    try {
-      const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-      const track = mediaStream.getVideoTracks()[0];
-      const capture = new window.imageCapture(track);
-      const blob = await capture.takePhoto();
-      setImage(new File([blob], 'captured-image.jpg', { type: 'image/jpeg' }));
-      setPreviewUrl(URL.createObjectURL(blob));
-      track.stop();
-    } catch {
-      setError('Camera capture failed');
-    }
-  };
+
 
   return (
     <section id="tool" className="min-h-screen flex items-center justify-center px-4 py-10">
@@ -133,14 +121,6 @@ const ToolSection = () => {
             whileTap={{ scale: 0.95 }}
           >
             Upload Image
-          </motion.button>
-          <motion.button
-            onClick={handleCaptureImage}
-            className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            Capture Image
           </motion.button>
         </div>
 
